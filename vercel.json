@@ -1,4 +1,6 @@
 {
+  "buildCommand": "echo 'No build needed'",
+  "outputDirectory": ".",
   "routes": [
     {
       "src": "/(.*)",
@@ -7,5 +9,7 @@
         "Cache-Control": "no-cache, no-store, must-revalidate"
       }
     }
-  ]
+  ],
+  "functions": {},
+  "framework": null
 }
