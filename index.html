@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GDE Hackathon</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      width: 100%;
+      background: #1a1a2e;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e94560;
+    }
+    header h1 { color: #e94560; font-size: 1.8rem; }
+    nav a {
+      color: #e0e0e0;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: #e94560; }
+    .hero {
+      text-align: center;
+      padding: 80px 20px 40px;
+    }
+    .hero h2 { font-size: 2.5rem; margin-bottom: 16px; }
+    .hero p { font-size: 1.1rem; color: #aaa; max-width: 500px; margin: 0 auto 30px; }
+    .btn {
+      background: #e94560;
+      color: #fff;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #c73652; }
+    .cards {
+      display: flex;
+      gap: 24px;
+      padding: 40px 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .card {
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 10px;
+      padding: 28px 24px;
+      width: 220px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card .icon { font-size: 2rem; margin-bottom: 12px; }
+    .card h3 { margin-bottom: 8px; color: #e94560; }
+    .card p { font-size: 0.9rem; color: #aaa; }
+    footer {
+      margin-top: auto;
+      padding: 20px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>GDE Hackathon</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Projects</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Build. Innovate. Inspire.</h2>
+    <p>Welcome to the GDE Hackathon — where ideas turn into impactful solutions.</p>
+    <a href="https://github.com/Prashantpd7/GDE" class="btn" target="_blank">View on GitHub</a>
+  </section>
+
+  <section class="cards">
+    <div class="card">
+      <div class="icon">💡</div>
+      <h3>Ideate</h3>
+      <p>Brainstorm creative solutions to real-world problems.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🛠️</div>
+      <h3>Build</h3>
+      <p>Develop and prototype your ideas with modern tools.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🚀</div>
+      <h3>Launch</h3>
+      <p>Present your project and make an impact.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 GDE Hackathon &mdash; <a href="https://github.com/Prashantpd7" style="color:#e94560;">Prashantpd7</a>
+  </footer>
+
+</body>
+</html>
