@@ -3,121 +3,323 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GDE Hackathon</title>
+  <title>StandupAI — Auto-generate your daily standup</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #0f0f1a;
       color: #e0e0e0;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      padding: 40px 16px;
     }
-    header {
-      width: 100%;
-      background: #1a1a2e;
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #e94560;
-    }
-    header h1 { color: #e94560; font-size: 1.8rem; }
-    nav a {
-      color: #e0e0e0;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 0.95rem;
-      transition: color 0.2s;
-    }
-    nav a:hover { color: #e94560; }
-    .hero {
-      text-align: center;
-      padding: 80px 20px 40px;
-    }
-    .hero h2 { font-size: 2.5rem; margin-bottom: 16px; }
-    .hero p { font-size: 1.1rem; color: #aaa; max-width: 500px; margin: 0 auto 30px; }
-    .btn {
-      background: #e94560;
-      color: #fff;
-      padding: 12px 28px;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .btn:hover { background: #c73652; }
-    .cards {
-      display: flex;
-      gap: 24px;
-      padding: 40px 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    h1 { font-size: 2rem; color: #e94560; margin-bottom: 6px; }
+    .subtitle { color: #888; margin-bottom: 32px; font-size: 0.95rem; }
     .card {
       background: #1a1a2e;
       border: 1px solid #2a2a4a;
-      border-radius: 10px;
-      padding: 28px 24px;
-      width: 220px;
-      text-align: center;
-      transition: transform 0.2s;
+      border-radius: 12px;
+      padding: 28px;
+      width: 100%;
+      max-width: 620px;
+      margin-bottom: 20px;
     }
-    .card:hover { transform: translateY(-4px); }
-    .card .icon { font-size: 2rem; margin-bottom: 12px; }
-    .card h3 { margin-bottom: 8px; color: #e94560; }
-    .card p { font-size: 0.9rem; color: #aaa; }
-    footer {
-      margin-top: auto;
-      padding: 20px;
+    label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 6px; margin-top: 16px; }
+    label:first-of-type { margin-top: 0; }
+    input, textarea {
+      width: 100%;
+      background: #0f0f1a;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      color: #e0e0e0;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus, textarea:focus { border-color: #e94560; }
+    textarea { resize: vertical; min-height: 90px; }
+    .btn {
+      margin-top: 20px;
+      width: 100%;
+      background: #e94560;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #c73652; }
+    .btn:disabled { background: #555; cursor: not-allowed; }
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #e94560;
+      margin-bottom: 12px;
+    }
+    .activity-item {
+      background: #0f0f1a;
+      border-left: 3px solid #e94560;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      color: #ccc;
+    }
+    .activity-item span { color: #888; font-size: 0.78rem; display: block; margin-top: 2px; }
+    #output-text {
+      background: #0f0f1a;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      min-height: 80px;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid #e94560;
+      color: #e94560;
+      border-radius: 6px;
+      padding: 8px 18px;
+      cursor: pointer;
       font-size: 0.85rem;
-      color: #555;
+      transition: all 0.2s;
     }
+    .copy-btn:hover { background: #e94560; color: #fff; }
+    .error { color: #e94560; font-size: 0.85rem; margin-top: 10px; }
+    .hidden { display: none; }
+    .loader { text-align: center; color: #888; padding: 12px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>GDE Hackathon</h1>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Projects</a>
-      <a href="#">Contact</a>
-    </nav>
-  </header>
+  <h1>🤖 StandupAI</h1>
+  <p class="subtitle">Auto-generate your daily standup from GitHub activity</p>
 
-  <section class="hero">
-    <h2>Build. Innovate. Inspire.</h2>
-    <p>Welcome to the GDE Hackathon — where ideas turn into impactful solutions.</p>
-    <a href="https://github.com/Prashantpd7/GDE" class="btn" target="_blank">View on GitHub</a>
-  </section>
+  <!-- Step 1: Input -->
+  <div class="card">
+    <div class="section-title">Step 1 — Your Info</div>
 
-  <section class="cards">
-    <div class="card">
-      <div class="icon">💡</div>
-      <h3>Ideate</h3>
-      <p>Brainstorm creative solutions to real-world problems.</p>
-    </div>
-    <div class="card">
-      <div class="icon">🛠️</div>
-      <h3>Build</h3>
-      <p>Develop and prototype your ideas with modern tools.</p>
-    </div>
-    <div class="card">
-      <div class="icon">🚀</div>
-      <h3>Launch</h3>
-      <p>Present your project and make an impact.</p>
-    </div>
-  </section>
+    <label>GitHub Username</label>
+    <input type="text" id="username" placeholder="e.g. sahilsaeidkhan" />
 
-  <footer>
-    &copy; 2026 GDE Hackathon &mdash; <a href="https://github.com/Prashantpd7" style="color:#e94560;">Prashantpd7</a>
-  </footer>
+    <label>Repository Name</label>
+    <input type="text" id="repo" placeholder="e.g. GDE (leave blank for all repos)" />
 
+    <label>Date (default: yesterday)</label>
+    <input type="date" id="date" />
+
+    <label>Paste 2–3 of your old standup messages (so we match your tone)</label>
+    <textarea id="examples" placeholder="e.g.&#10;- Worked on auth flow, fixed token refresh bug&#10;- Reviewed PR for dashboard, left comments&#10;- Closed 2 issues related to login page"></textarea>
+
+    <button class="btn" id="fetch-btn" onclick="fetchActivity()">Fetch My Activity</button>
+    <p class="error hidden" id="error-msg"></p>
+  </div>
+
+  <!-- Step 2: Activity Preview -->
+  <div class="card hidden" id="activity-card">
+    <div class="section-title">Step 2 — Yesterday's Activity</div>
+    <div id="activity-list"></div>
+    <button class="btn" onclick="generateStandup()">Generate Standup ✨</button>
+  </div>
+
+  <!-- Step 3: Output -->
+  <div class="card hidden" id="output-card">
+    <div class="section-title">Step 3 — Your Standup</div>
+    <div id="output-text"></div>
+    <button class="copy-btn" onclick="copyStandup()">Copy to Clipboard</button>
+  </div>
+
+<script>
+  // Set default date to yesterday
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  document.getElementById('date').value = yesterday.toISOString().split('T')[0];
+
+  let activityData = [];
+
+  async function fetchActivity() {
+    const username = document.getElementById('username').value.trim();
+    const repo = document.getElementById('repo').value.trim();
+    const date = document.getElementById('date').value;
+    const errEl = document.getElementById('error-msg');
+    const btn = document.getElementById('fetch-btn');
+
+    errEl.classList.add('hidden');
+    if (!username) { showError('Please enter your GitHub username.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Fetching...';
+    activityData = [];
+
+    try {
+      const since = date + 'T00:00:00Z';
+      const until = date + 'T23:59:59Z';
+
+      // Fetch commits
+      let commitsUrl = repo
+        ? `https://api.github.com/repos/${username}/${repo}/commits?author=${username}&since=${since}&until=${until}&per_page=20`
+        : `https://api.github.com/search/commits?q=author:${username}+committer-date:${date}&per_page=20`;
+
+      const headers = { 'Accept': 'application/vnd.github.cloak-preview+json' };
+
+      // Always use search API for commits (works across repos)
+      const commitRes = await fetch(
+        `https://api.github.com/search/commits?q=author:${username}+committer-date:${date}${repo ? '+repo:'+username+'/'+repo : ''}&per_page=20`,
+        { headers }
+      );
+      const commitData = await commitRes.json();
+      if (commitData.items) {
+        commitData.items.forEach(c => {
+          activityData.push({
+            type: 'commit',
+            text: c.commit.message.split('\n')[0],
+            repo: c.repository.name
+          });
+        });
+      }
+
+      // Fetch PRs opened
+      const prRes = await fetch(
+        `https://api.github.com/search/issues?q=author:${username}+type:pr+created:${date}${repo ? '+repo:'+username+'/'+repo : ''}&per_page=10`
+      );
+      const prData = await prRes.json();
+      if (prData.items) {
+        prData.items.forEach(p => {
+          activityData.push({ type: 'pr_opened', text: p.title, repo: p.repository_url.split('/').pop() });
+        });
+      }
+
+      // Fetch PRs reviewed (commented on)
+      const reviewRes = await fetch(
+        `https://api.github.com/search/issues?q=commenter:${username}+type:pr+updated:${date}${repo ? '+repo:'+username+'/'+repo : ''}&per_page=10`
+      );
+      const reviewData = await reviewRes.json();
+      if (reviewData.items) {
+        reviewData.items.forEach(p => {
+          if (p.user.login !== username) { // not their own PR
+            activityData.push({ type: 'pr_reviewed', text: p.title, repo: p.repository_url.split('/').pop() });
+          }
+        });
+      }
+
+      // Fetch issues closed/commented
+      const issueRes = await fetch(
+        `https://api.github.com/search/issues?q=involves:${username}+type:issue+updated:${date}${repo ? '+repo:'+username+'/'+repo : ''}&per_page=10`
+      );
+      const issueData = await issueRes.json();
+      if (issueData.items) {
+        issueData.items.forEach(i => {
+          activityData.push({
+            type: i.state === 'closed' ? 'issue_closed' : 'issue_commented',
+            text: i.title,
+            repo: i.repository_url.split('/').pop()
+          });
+        });
+      }
+
+      if (activityData.length === 0) {
+        showError('No activity found for that date. Try a different date or check the username.');
+        btn.disabled = false;
+        btn.textContent = 'Fetch My Activity';
+        return;
+      }
+
+      renderActivity();
+    } catch (e) {
+      showError('Failed to fetch from GitHub. Check your username and try again.');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Fetch My Activity';
+  }
+
+  function renderActivity() {
+    const list = document.getElementById('activity-list');
+    const icons = { commit: '💾', pr_opened: '🔀', pr_reviewed: '👀', issue_closed: '✅', issue_commented: '💬' };
+    const labels = { commit: 'Commit', pr_opened: 'PR Opened', pr_reviewed: 'PR Reviewed', issue_closed: 'Issue Closed', issue_commented: 'Issue Comment' };
+
+    list.innerHTML = activityData.map(a => `
+      <div class="activity-item">
+        ${icons[a.type]} <strong>${labels[a.type]}</strong> — ${a.text}
+        <span>${a.repo}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('activity-card').classList.remove('hidden');
+    document.getElementById('activity-card').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function generateStandup() {
+    const examples = document.getElementById('examples').value.trim();
+    const date = document.getElementById('date').value;
+
+    // Group activity
+    const commits = activityData.filter(a => a.type === 'commit');
+    const prsOpened = activityData.filter(a => a.type === 'pr_opened');
+    const prsReviewed = activityData.filter(a => a.type === 'pr_reviewed');
+    const issuesClosed = activityData.filter(a => a.type === 'issue_closed');
+    const issuesCommented = activityData.filter(a => a.type === 'issue_commented');
+
+    // Detect tone from examples
+    const useBullets = !examples || examples.includes('-') || examples.includes('•');
+    const casual = examples && (examples.toLowerCase().includes('worked on') || examples.toLowerCase().includes('fixed'));
+
+    let lines = [];
+
+    if (commits.length > 0) {
+      const msgs = [...new Set(commits.map(c => c.text))].slice(0, 4);
+      if (casual) lines.push(`Worked on: ${msgs.join(', ')}`);
+      else lines.push(`Pushed ${commits.length} commit(s): ${msgs.join('; ')}`);
+    }
+    if (prsOpened.length > 0) {
+      lines.push(`Opened PR${prsOpened.length > 1 ? 's' : ''}: ${prsOpened.map(p => p.text).join(', ')}`);
+    }
+    if (prsReviewed.length > 0) {
+      lines.push(`Reviewed PR${prsReviewed.length > 1 ? 's' : ''}: ${prsReviewed.map(p => p.text).join(', ')}`);
+    }
+    if (issuesClosed.length > 0) {
+      lines.push(`Closed issue${issuesClosed.length > 1 ? 's' : ''}: ${issuesClosed.map(i => i.text).join(', ')}`);
+    }
+    if (issuesCommented.length > 0) {
+      lines.push(`Commented on issue${issuesCommented.length > 1 ? 's' : ''}: ${issuesCommented.map(i => i.text).slice(0,2).join(', ')}`);
+    }
+
+    const formatted = useBullets
+      ? lines.map(l => `- ${l}`).join('\n')
+      : lines.join('\n');
+
+    const output = `Yesterday (${date}):\n${formatted}\n\nToday: Continuing from where I left off.`;
+
+    document.getElementById('output-text').textContent = output;
+    document.getElementById('output-card').classList.remove('hidden');
+    document.getElementById('output-card').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyStandup() {
+    const text = document.getElementById('output-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+    });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+</script>
 </body>
 </html>
